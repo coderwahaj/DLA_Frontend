@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const passport = require('./config/passport');
 const routes = require('./routes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
@@ -24,6 +27,23 @@ if (process.env.NODE_ENV === 'development') {
 // Body parser middleware
 app.use(express. json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Session configuration (needed for OAuth)
+app.use(session({
+  secret: process.env. SESSION_SECRET || 'your-session-secret',
+  resave:  false,
+  saveUninitialized: false,
+  cookie: {
+    secure:  process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge:  24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // API routes
 app.use(process.env.API_PREFIX || '/api/v1', routes);
