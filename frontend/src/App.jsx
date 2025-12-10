@@ -6,6 +6,12 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleBasedRoute from "@/components/RoleBasedRoute";
+import { MainLayout } from "@/components/adminlayout/MainLayout"; // import from actual folder
+
+import Admin1Dashboard from "./pages/Admin1Dashboard";
+import ManageDatasets from "./pages/ManageDatasets";
+import UserAccounts, { ManageUsers } from "./pages/ManageUsers";
+import FeedbackMonitoring from "./pages/FeedbackMonitoring";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -41,6 +47,40 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/verify-email" element={<EmailVerification />} />
+              
+              {/* Admin Routes with MainLayout */}
+              <Route
+                path="/admin1-dashboard"
+                element={
+                  <MainLayout>
+                    <Admin1Dashboard />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/manage-datasets"
+                element={
+                  <MainLayout>
+                    <ManageDatasets />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/user-accounts"
+                element={
+                  <MainLayout>
+                    <ManageUsers />
+                  </MainLayout>
+                }
+              />
+              <Route
+                path="/feedback-monitoring"
+                element={
+                  <MainLayout>
+                    <FeedbackMonitoring />
+                  </MainLayout>
+                }
+              />
 
               {/* Protected Routes - All Authenticated Users */}
               <Route
