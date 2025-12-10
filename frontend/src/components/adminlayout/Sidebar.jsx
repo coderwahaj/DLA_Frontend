@@ -13,7 +13,6 @@ import {
 const navItems = [
   {
     title: 'Dashboard',
-    href: '/admin-dashboard',
     href: '/admin',
     icon: LayoutDashboard,
   },

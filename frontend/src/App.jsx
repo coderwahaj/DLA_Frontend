@@ -79,41 +79,9 @@ function App() {
                 }
               />
 
-              {/* Simple Admin Dashboard (Original) */}
-              <Route
-                path="/admin"
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <AdminDashboard />
-                  </RoleBasedRoute>
-                }
-              />
-
-              {/* Detailed Admin Routes with MainLayout */}
-              <Route
-                path="/admin-dashboard"
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <MainLayout>
-                      <AdminDashboard />
-                    </MainLayout>
-                  </RoleBasedRoute>
-                }
-              />
-              <Route
-                path="/manage-datasets"
-                element={
-                  <RoleBasedRoute allowedRoles={['admin']}>
-                    <MainLayout>
-                      <ManageDatasets />
-                    </MainLayout>
-                  </RoleBasedRoute>
-                }
-              />
-
               {/* Admin Routes - Protected with RoleBasedRoute and MainLayout */}
               <Route
-                path="/manage-users"
+                path="/admin"
                 element={
                   <RoleBasedRoute allowedRoles={['admin']}>
                     <MainLayout>
@@ -152,7 +120,6 @@ function App() {
                   </RoleBasedRoute>
                 }
               />
-
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
