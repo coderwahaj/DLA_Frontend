@@ -11,7 +11,7 @@ import {
 const navItems = [
   {
     title: 'Dashboard',
-    href: '/admin1-dashboard',
+    href: '/admin-dashboard',
     icon: LayoutDashboard,
   },
   {

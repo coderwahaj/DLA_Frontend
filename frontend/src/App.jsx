@@ -6,25 +6,30 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleBasedRoute from "@/components/RoleBasedRoute";
-import { MainLayout } from "@/components/adminlayout/MainLayout"; // import from actual folder
+import { MainLayout } from "@/components/adminlayout/MainLayout";
 
-import Admin1Dashboard from "./pages/AdminDashboard";
-import ManageDatasets from "./pages/ManageDatasets";
-import UserAccounts, { ManageUsers } from "./pages/ManageUsers";
-import FeedbackMonitoring from "./pages/FeedbackMonitoring";
-
-// Pages
+// Public Pages
 import LandingPage from "./pages/LandingPage";
 import About from "./pages/About";
-import Platform from "./pages/Platform";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import EmailVerification from "./pages/EmailVerification";
+
+// User Pages
+import Platform from "./pages/Platform";
+import DocumentSummarizer from "./pages/DocumentSummarizer";
 import Profile from "./pages/Profile";
+
+// Admin Pages
 import AdminDashboard from "./pages/AdminDashboard";
+import ManageDatasets from "./pages/ManageDatasets";
+import { ManageUsers } from "./pages/ManageUsers";
+import FeedbackMonitoring from "./pages/FeedbackMonitoring";
+
+// 404
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,40 +52,6 @@ function App() {
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/verify-email" element={<EmailVerification />} />
-              
-              {/* Admin Routes with MainLayout */}
-              <Route
-                path="/admin1-dashboard"
-                element={
-                  <MainLayout>
-                    <Admin1Dashboard />
-                  </MainLayout>
-                }
-              />
-              <Route
-                path="/manage-datasets"
-                element={
-                  <MainLayout>
-                    <ManageDatasets />
-                  </MainLayout>
-                }
-              />
-              <Route
-                path="/user-accounts"
-                element={
-                  <MainLayout>
-                    <ManageUsers />
-                  </MainLayout>
-                }
-              />
-              <Route
-                path="/feedback-monitoring"
-                element={
-                  <MainLayout>
-                    <FeedbackMonitoring />
-                  </MainLayout>
-                }
-              />
 
               {/* Protected Routes - All Authenticated Users */}
               <Route
@@ -88,6 +59,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Platform />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/document-summarizer"
+                element={
+                  <ProtectedRoute>
+                    <DocumentSummarizer />
                   </ProtectedRoute>
                 }
               />
@@ -100,12 +79,54 @@ function App() {
                 }
               />
 
-              {/* Admin Only Routes */}
+              {/* Simple Admin Dashboard (Original) */}
               <Route
                 path="/admin"
                 element={
                   <RoleBasedRoute allowedRoles={['admin']}>
                     <AdminDashboard />
+                  </RoleBasedRoute>
+                }
+              />
+
+              {/* Detailed Admin Routes with MainLayout */}
+              <Route
+                path="/admin-dashboard"
+                element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                      <AdminDashboard />
+                    </MainLayout>
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/manage-datasets"
+                element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                      <ManageDatasets />
+                    </MainLayout>
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/manage-users"
+                element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                      <ManageUsers />
+                    </MainLayout>
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/feedback-monitoring"
+                element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                      <FeedbackMonitoring />
+                    </MainLayout>
                   </RoleBasedRoute>
                 }
               />
