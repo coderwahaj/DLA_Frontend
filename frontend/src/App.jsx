@@ -8,6 +8,12 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleBasedRoute from "@/components/RoleBasedRoute";
 import { MainLayout } from "@/components/adminlayout/MainLayout";
 
+// Admin Pages
+import AdminDashboard from "./pages/AdminDashboard";
+import ManageDatasets from "./pages/ManageDatasets";
+import { ManageUsers } from "./pages/ManageUsers";
+import FeedbackMonitoring from "./pages/FeedbackMonitoring";
+
 // Public Pages
 import LandingPage from "./pages/LandingPage";
 import About from "./pages/About";
@@ -22,12 +28,6 @@ import EmailVerification from "./pages/EmailVerification";
 import Platform from "./pages/Platform";
 import DocumentSummarizer from "./pages/DocumentSummarizer";
 import Profile from "./pages/Profile";
-
-// Admin Pages
-import AdminDashboard from "./pages/AdminDashboard";
-import ManageDatasets from "./pages/ManageDatasets";
-import { ManageUsers } from "./pages/ManageUsers";
-import FeedbackMonitoring from "./pages/FeedbackMonitoring";
 
 // 404
 import NotFound from "./pages/NotFound";
@@ -110,8 +110,30 @@ function App() {
                   </RoleBasedRoute>
                 }
               />
+
+              {/* Admin Routes - Protected with RoleBasedRoute and MainLayout */}
               <Route
                 path="/manage-users"
+                element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                      <AdminDashboard />
+                    </MainLayout>
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/manage-datasets"
+                element={
+                  <RoleBasedRoute allowedRoles={['admin']}>
+                    <MainLayout>
+                      <ManageDatasets />
+                    </MainLayout>
+                  </RoleBasedRoute>
+                }
+              />
+              <Route
+                path="/user-accounts"
                 element={
                   <RoleBasedRoute allowedRoles={['admin']}>
                     <MainLayout>

@@ -2,9 +2,9 @@ import React from 'react';
 import { StatCard } from '@/components/admindashboard/StatCard';
 import { ActivityChart } from '@/components/admindashboard/ActivityChart';
 import { AlertCard } from '@/components/admindashboard/AlertCard';
-import { Users, Activity, Database } from 'lucide-react';
+import { Users, Activity, Database, Sidebar } from 'lucide-react';
 
-export const Admin1Dashboard = () => {
+export const AdminDashboard = () => {
   const stats = [
     {
       title: 'Total Users',
@@ -84,4 +84,4 @@ export const Admin1Dashboard = () => {
   );
 };
 
-export default Admin1Dashboard;
+export default AdminDashboard;
