@@ -44,13 +44,22 @@ class AuthService {
 
     // Create user
     const user = await User.create({
-      ...userData,
+      ... userData,
       authProvider: 'local'
     });
 
     // Generate email verification token
     const verificationToken = user.generateVerificationToken();
     await user.save();
+
+    // 🔥 LOG TOKEN FOR DEVELOPMENT
+    console.log('═══════════════════════════════════════════');
+    console.log('📧 EMAIL VERIFICATION TOKEN GENERATED');
+    console.log('═══════════════════════════════════════════');
+    console.log('User:', user.email);
+    console.log('Token:', verificationToken);
+    console.log('Link:', `${process.env. FRONTEND_URL}/verify-email? token=${verificationToken}`);
+    console.log('═══════════════════════════════════════════\n');
 
     // Send verification email (optional)
     try {
@@ -62,7 +71,7 @@ class AuthService {
 
     // Generate tokens
     const token = this.generateToken(user. id);
-    const refreshToken = this.generateRefreshToken(user.id);
+    const refreshToken = this. generateRefreshToken(user.id);
 
     // Save refresh token
     user.refreshToken = refreshToken;
@@ -201,29 +210,40 @@ class AuthService {
     return { message: 'Password reset link sent to email' };
   }
 
-  // Reset password
-  async resetPassword(token, newPassword) {
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
-    const user = await User.findOne({
-      where: {
-        passwordResetToken: hashedToken,
-        passwordResetExpires: { [require('sequelize').Op.gt]: Date.now() }
-      }
-    });
+  // Request password reset
+  async requestPasswordReset(email) {
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
-      throw new Error('Invalid or expired reset token');
+      // Don't reveal if user exists
+      return { message: 'If the email exists, a reset link has been sent' };
     }
 
-    // Update password
-    user.password = newPassword;
-    user.passwordResetToken = null;
-    user.passwordResetExpires = null;
-    user.refreshToken = null; // Invalidate all sessions
+    if (user.authProvider !== 'local') {
+      throw new Error(`This account uses ${user.authProvider} authentication`);
+    }
+
+    // Generate reset token
+    const resetToken = user.generatePasswordResetToken();
     await user.save();
 
-    return { message: 'Password reset successful' };
+    // 🔥 LOG TOKEN FOR DEVELOPMENT
+    console.log('═══════════════════════════════════════════');
+    console.log('🔑 PASSWORD RESET TOKEN GENERATED');
+    console.log('═══════════════════════════════════════════');
+    console.log('User:', user.email);
+    console.log('Token:', resetToken);
+    console.log('Link:', `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`);
+    console.log('═══════════════════════════════════════════\n');
+
+    // Send reset email
+    try {
+      await emailService.sendPasswordResetEmail(user.email, resetToken);
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+    }
+
+    return { message: 'Password reset link sent to email' };
   }
 
   // Change password (authenticated user)

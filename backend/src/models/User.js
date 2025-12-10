@@ -1,12 +1,13 @@
 const { DataTypes } = require('sequelize');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 module.exports = (sequelize) => {
   const User = sequelize.define('User', {
     id: {
       type: DataTypes.UUID,
-      defaultValue: DataTypes. UUIDV4,
-      primaryKey: true
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey:  true
     },
     firstName: {
       type: DataTypes.STRING,
@@ -29,35 +30,37 @@ module.exports = (sequelize) => {
       allowNull: false,
       unique: true,
       validate: {
-        isEmail: true
+        isEmail:  true
       }
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true, // Nullable for Google OAuth users
-      validate: {
-        len: [6, 100]
-      }
+      allowNull: true
     },
     phoneNumber: {
       type: DataTypes.STRING,
-      allowNull: true,
-      validate: {
-        is: /^[0-9+\-\s()]*$/
-      }
+      allowNull: true
     },
     role: {
       type: DataTypes. ENUM('user', 'lawyer', 'admin'),
-      defaultValue: 'user',
-      allowNull: false
+      defaultValue: 'user'
+    },
+    authProvider: {
+      type: DataTypes. ENUM('local', 'google'),
+      defaultValue: 'local'
+    },
+    googleId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true
+    },
+    isEmailVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
-    },
-    isEmailVerified: {
-      type:  DataTypes.BOOLEAN,
-      defaultValue: false
     },
     emailVerificationToken: {
       type: DataTypes.STRING,
@@ -80,77 +83,70 @@ module.exports = (sequelize) => {
       allowNull: true
     },
     lastLogin: {
-      type: DataTypes.DATE
-    },
-    // Google OAuth fields
-    googleId:  {
-      type: DataTypes. STRING,
-      allowNull: true,
-      unique: true
-    },
-    authProvider: {
-      type: DataTypes. ENUM('local', 'google'),
-      defaultValue: 'local',
-      allowNull: false
-    },
-    profilePicture: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: true
     }
   }, {
-    tableName: 'users',
+    tableName: 'users',  // ← FORCE LOWERCASE TABLE NAME
     timestamps: true,
     hooks: {
       beforeCreate: async (user) => {
-        // Only hash password if it exists (local auth)
         if (user.password) {
-          user.password = await bcrypt.hash(user.password, 10);
-        }
-        
-        // Set email as verified for Google OAuth
-        if (user.authProvider === 'google') {
-          user.isEmailVerified = true;
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
         }
       },
       beforeUpdate: async (user) => {
         if (user.changed('password') && user.password) {
-          user.password = await bcrypt.hash(user.password, 10);
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(user.password, salt);
         }
       }
     }
   });
 
-  // Instance methods
+  // Compare password
   User.prototype.comparePassword = async function(candidatePassword) {
     if (!this.password) {
-      return false; // OAuth users don't have passwords
+      return false;
     }
     return await bcrypt.compare(candidatePassword, this.password);
   };
 
-  User.prototype.toJSON = function() {
-    const values = { ...this.get() };
-    delete values.password;
-    delete values.refreshToken;
-    delete values.emailVerificationToken;
-    delete values.passwordResetToken;
-    return values;
+  // Generate email verification token - RETURNS UNHASHED TOKEN
+  User.prototype. generateVerificationToken = function() {
+    // Generate random token (UNHASHED)
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    // Hash it and store in database
+    this.emailVerificationToken = crypto
+      .createHash('sha256')
+      .update(verificationToken)
+      .digest('hex');
+
+    // Set expiry to 24 hours from now
+    this. emailVerificationExpires = Date. now() + 24 * 60 * 60 * 1000;
+
+    // Return the UNHASHED token (this goes in the email)
+    return verificationToken;
   };
 
-  User.prototype.generateVerificationToken = function() {
-    const crypto = require('crypto');
-    const token = crypto.randomBytes(32).toString('hex');
-    this.emailVerificationToken = crypto.createHash('sha256').update(token).digest('hex');
-    this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-    return token;
-  };
-
+  // Generate password reset token - RETURNS UNHASHED TOKEN
   User.prototype.generatePasswordResetToken = function() {
-    const crypto = require('crypto');
-    const token = crypto. randomBytes(32).toString('hex');
-    this.passwordResetToken = crypto.createHash('sha256').update(token).digest('hex');
-    this.passwordResetExpires = Date.now() + 60 * 60 * 1000; // 1 hour
-    return token;
+    // Generate random token (UNHASHED)
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // Hash it and store in database
+    this.passwordResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    // Set expiry to 1 hour from now
+    this.passwordResetExpires = Date.now() + 60 * 60 * 1000;
+
+    // Return the UNHASHED token (this goes in the email)
+    return resetToken;
   };
 
   return User;

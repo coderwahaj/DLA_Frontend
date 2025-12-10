@@ -62,7 +62,7 @@ router.get(
   '/verify-email/:token',
   authValidator.verifyEmailValidator,
   validate,
-  authController. verifyEmail
+  authController.verifyEmail
 );
 
 // Password management
