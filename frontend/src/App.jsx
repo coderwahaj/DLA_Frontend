@@ -8,7 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleBasedRoute from "@/components/RoleBasedRoute";
 import { MainLayout } from "@/components/adminlayout/MainLayout"; // import from actual folder
 
-import Admin1Dashboard from "./pages/Admin1Dashboard";
+import Admin1Dashboard from "./pages/AdminDashboard";
 import ManageDatasets from "./pages/ManageDatasets";
 import UserAccounts, { ManageUsers } from "./pages/ManageUsers";
 import FeedbackMonitoring from "./pages/FeedbackMonitoring";

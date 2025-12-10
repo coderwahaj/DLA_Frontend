@@ -87,7 +87,7 @@ const Header = () => {
               {/* Profile Link */}
               <Link
                 to="/profile"
-                className="flex items-center gap-1.5 px-3 xl:px-4 py-1.5 bg-transparent border-2 border-white text-white rounded-lg text-[16px] xl:text-[18px] font-medium hover: bg-white hover:text-[#29473E] transition-all duration-300 shadow-sm hover:shadow-md whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 xl:px-4 py-1.5 bg-transparent border-2 border-white text-[#29473E] rounded-lg text-[16px] xl:text-[18px] font-medium hover: bg-white hover:text-[#29473E] transition-all duration-300 shadow-sm hover:shadow-md whitespace-nowrap"
                 style={{ fontFamily: "Ropa Sans" }}
               >
                 <User className="w-4 h-4 xl:w-5 xl:h-5" />
