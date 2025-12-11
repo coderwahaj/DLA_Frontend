@@ -1,0 +1,22 @@
+# FastAPI and Server
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv
+
+# Core ML - Compatible versions
+torch
+transformers<5.0.0
+sentence-transformers
+accelerate
+peft
+
+# Vector Store
+faiss-cpu
+
+# Retrieval
+rank-bm25
+
+# Utilities
+numpy
+tqdm
