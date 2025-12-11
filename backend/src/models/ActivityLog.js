@@ -36,7 +36,8 @@ module.exports = (sequelize) => {
   ActivityLog.associate = (models) => {
     ActivityLog.belongsTo(models.User, {
       foreignKey: 'userId',
-      as: 'user'
+      as: 'user',
+      onDelete: 'SET NULL'
     });
   };
 
