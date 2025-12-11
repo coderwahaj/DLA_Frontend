@@ -515,7 +515,7 @@ const Login = () => {
                   </svg>
                 </div>
                 <span
-                  className="text-[#44444E] text-sm sm: text-base lg:text-lg font-normal whitespace-nowrap"
+                  className="text-[#44444E] text-sm sm:text-base lg:text-lg font-normal whitespace-nowrap"
                   style={{ fontFamily: "Ropa Sans" }}
                 >
                   AI Legal Help
@@ -539,7 +539,7 @@ const Login = () => {
                   </svg>
                 </div>
                 <span
-                  className="text-[#44444E] text-sm sm: text-base lg:text-lg font-normal whitespace-nowrap"
+                  className="text-[#44444E] text-sm sm:text-base lg:text-lg font-normal whitespace-nowrap"
                   style={{ fontFamily: "Ropa Sans" }}
                 >
                   24/7 Support
@@ -619,7 +619,7 @@ const Login = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover: text-[#29473E] transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-[#29473E] transition-colors"
                     disabled={isLoading}
                     tabIndex={-1}
                   >
