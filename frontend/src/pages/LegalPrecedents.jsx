@@ -317,13 +317,13 @@ const LegalPrecedents = () => {
                           Title
                         </th>
                         <th 
-                          className="text-left py-3 lg:py-4 px-3 lg:px-4 font-bold text-lg lg: text-xl text-gray-900"
+                          className="text-left py-3 lg:py-4 px-3 lg:px-4 font-bold text-lg lg:text-xl text-gray-900"
                           style={{ fontFamily: 'Ropa Sans' }}
                         >
                           Judge
                         </th>
                         <th 
-                          className="text-center py-3 lg:py-4 px-3 lg: px-4 font-bold text-lg lg:text-xl text-gray-900 w-24 lg:w-32"
+                          className="text-center py-3 lg:py-4 px-3 lg:px-4 font-bold text-lg lg:text-xl text-gray-900 w-24 lg:w-32"
                           style={{ fontFamily: 'Ropa Sans' }}
                         >
                           Judgment
