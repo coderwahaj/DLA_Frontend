@@ -15,7 +15,7 @@
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build",
     "build:server": "vite build --config vite.config.server.js",
-    "start": "node dist/server/node-build. mjs",
+    "start": "node dist/server/node-build.mjs",
     "test": "vitest --run",
     "format.fix": "prettier --write ."
   },
@@ -23,6 +23,7 @@
     "axios": "^1.13.2",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "react-hot-toast": "^2.6.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
