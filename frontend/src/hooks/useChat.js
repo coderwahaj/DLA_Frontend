@@ -1,14 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
+import api from '@/api/axios';
 
 export const useChat = () => {
   const [messages,       setMessages]       = useState([]);
@@ -23,11 +14,8 @@ export const useChat = () => {
     setHistoryLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/chat/history?limit=50`, {
-        headers: getAuthHeaders(),
-      });
-      if (!res.ok) throw new Error('Failed to load history');
-      const data = await res.json();
+      const res = await api.get('/chat/history', { params: { limit: 50 } });
+      const data = res.data;
 
       const items = data?.data?.items || [];
       setSessions(
@@ -64,23 +52,13 @@ export const useChat = () => {
       };
       setMessages((prev) => [...prev, userMessage]);
 
-      const res = await fetch(`${API_BASE}/chat`, {
-        method:  'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          message:   content,
-          sessionId: currentSession,
-          queryType: 'general',
-          top_k:     5,
-        }),
+      const res = await api.post('/chat', {
+        message: content,
+        sessionId: currentSession,
+        queryType: 'general',
+        top_k: 5,
       });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || `Server error ${res.status}`);
-      }
-
-      const data = await res.json();
+      const data = res.data;
       const { response: r, query: q } = data.data;
 
       const botMessage = {
@@ -143,10 +121,7 @@ export const useChat = () => {
       setCurrentSession(null);
     }
     try {
-      await fetch(`${API_BASE}/chat/${queryId}`, {
-        method:  'DELETE',
-        headers: getAuthHeaders(),
-      });
+      await api.delete(`/chat/${queryId}`);
     } catch {
       loadHistory(); // re-sync on failure
     }
@@ -155,13 +130,8 @@ export const useChat = () => {
   // ── Submit feedback ───────────────────────────────────────────────────────
   const submitFeedback = useCallback(async ({ responseId, rating, comment = '' }) => {
     if (!responseId || !rating) return;
-    const res = await fetch(`${API_BASE}/chat/feedback`, {
-      method:  'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ responseId, rating, comment }),
-    });
-    if (!res.ok) throw new Error('Failed to submit feedback');
-    return res.json();
+    const res = await api.post('/chat/feedback', { responseId, rating, comment });
+    return res.data;
   }, []);
 
   // ── Load session into messages ────────────────────────────────────────────

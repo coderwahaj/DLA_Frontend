@@ -29,70 +29,65 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "@/hooks/useAuth";
+import api from "@/api/axios";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // API SERVICE
 // ─────────────────────────────────────────────────────────────────────────────
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
-
-const getAuthHeaders = () => {
-  // Try multiple common token storage locations
-  const token =
-    localStorage.getItem("token") ||
-    localStorage.getItem("authToken") ||
-    localStorage.getItem("accessToken") ||
-    sessionStorage.getItem("token") ||
-    sessionStorage.getItem("authToken");
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-};
-
 const chatApi = {
   sendMessage: async ({ message, sessionId, queryType = "general", userId }) => {
-    const res = await fetch(`${API_BASE}/chat`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ message, sessionId, queryType, top_k: 5, userId }),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `Server error ${res.status}`);
+    try {
+      const res = await api.post("/chat", {
+        message,
+        sessionId,
+        queryType,
+        top_k: 5,
+        userId,
+      });
+      return res.data; // { status, data: { query, response } }
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Server error";
+      throw new Error(message);
     }
-    return res.json(); // { status, data: { query, response } }
   },
 
   getHistory: async ({ limit = 50, offset = 0, userId } = {}) => {
-    const params = new URLSearchParams({ limit, offset });
-    if (userId) params.set("userId", userId);
-    const res = await fetch(
-      `${API_BASE}/chat/history?${params.toString()}`,
-      { headers: getAuthHeaders() }
-    );
-    if (!res.ok) throw new Error("Failed to load history");
-    return res.json(); // { status, data: { total, items } }
+    try {
+      const params = { limit, offset, ...(userId ? { userId } : {}) };
+      const res = await api.get("/chat/history", { params });
+      return res.data; // { status, data: { total, items } }
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Failed to load history";
+      throw new Error(message);
+    }
   },
 
   deleteChat: async (queryId, userId) => {
-    const params = userId ? `?userId=${userId}` : "";
-    const res = await fetch(`${API_BASE}/chat/${queryId}${params}`, {
-      method: "DELETE",
-      headers: getAuthHeaders(),
-      body: userId ? JSON.stringify({ userId }) : undefined,
-    });
-    if (!res.ok) throw new Error("Failed to delete chat");
-    return res.json();
+    try {
+      const res = await api.delete(`/chat/${queryId}`, {
+        params: userId ? { userId } : undefined,
+        data: userId ? { userId } : undefined,
+      });
+      return res.data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Failed to delete chat";
+      throw new Error(message);
+    }
   },
 
   submitFeedback: async ({ responseId, rating, comment, userId }) => {
-    const res = await fetch(`${API_BASE}/chat/feedback`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ responseId, rating, comment, userId }),
-    });
-    if (!res.ok) throw new Error("Failed to submit feedback");
-    return res.json();
+    try {
+      const res = await api.post("/chat/feedback", {
+        responseId,
+        rating,
+        comment,
+        userId,
+      });
+      return res.data;
+    } catch (error) {
+      const message = error.response?.data?.message || error.message || "Failed to submit feedback";
+      throw new Error(message);
+    }
   },
 };
 

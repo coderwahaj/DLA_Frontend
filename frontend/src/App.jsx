@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster.jsx";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster as HotToaster } from "react-hot-toast"; // ✅ ADD THIS
+import { Toaster as HotToaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import RoleBasedRoute from "@/components/RoleBasedRoute";
